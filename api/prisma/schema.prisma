@@ -1,0 +1,79 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id               String      @id @default(cuid())
+  email            String      @unique
+  hashedPassword   String
+  firstName        String
+  lastName         String
+  role             UserRole
+  status           UserStatus  @default(PENDING)
+  departmentId     String
+  department       Department  @relation(fields: [departmentId], references: [id])
+  headedDepartment Department? @relation("DepartmentHOD")
+  bookings         Booking[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String
+  users     User[]
+  hodId     String?  @unique
+  hod       User?    @relation("DepartmentHOD", fields: [hodId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String    @unique
+  phone     String
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  title          String
+  description    String
+  status         BookingStatus
+  startTime      DateTime
+  endTime        DateTime
+  assignedUserId String
+  user           User          @relation(fields: [assignedUserId], references: [id])
+  clientId       String
+  client         Client        @relation(fields: [clientId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
