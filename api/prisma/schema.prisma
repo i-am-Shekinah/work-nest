@@ -26,19 +26,20 @@ enum BookingStatus {
 }
 
 model User {
-  id               String      @id @default(cuid())
-  email            String      @unique
-  hashedPassword   String
-  firstName        String
-  lastName         String
-  role             UserRole
-  status           UserStatus  @default(PENDING)
-  departmentId     String
-  department       Department  @relation(fields: [departmentId], references: [id])
-  headedDepartment Department? @relation("DepartmentHOD")
-  bookings         Booking[]
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  id                String      @id @default(cuid())
+  email             String      @unique
+  hashedPassword    String?
+  firstName         String
+  lastName          String
+  role              UserRole
+  status            UserStatus  @default(PENDING)
+  profilePictureUrl String?
+  departmentId      String
+  department        Department  @relation(fields: [departmentId], references: [id])
+  headedDepartment  Department? @relation("DepartmentHOD")
+  bookings          Booking[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
 
 model Department {
