@@ -1,9 +1,6 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
-import {
-  ConfigModule,
-  ConfigService,
-} from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 import { InvitationModule } from './invitation/invitation.module';
@@ -38,4 +35,4 @@ import { PrismaModule } from './prisma/prisma.module';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

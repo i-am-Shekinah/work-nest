@@ -10,6 +10,6 @@ import { InvitationService } from './invitation.service';
 @Module({
   imports: [MailModule, PrismaModule, JwtModule],
   providers: [InvitationService],
-  controllers: [InvitationController]
+  controllers: [InvitationController],
 })
-export class InvitationModule { }
+export class InvitationModule {}

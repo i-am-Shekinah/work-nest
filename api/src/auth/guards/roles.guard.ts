@@ -10,9 +10,11 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) { }
+  constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride('roles', [
       context.getHandler(),
       context.getClass(),
@@ -26,7 +28,9 @@ export class RolesGuard implements CanActivate {
     const hasPermission = requiredRoles.includes(user.role);
 
     if (!hasPermission) {
-      throw new UnauthorizedException('You do not have the permission to access this resource!');
+      throw new UnauthorizedException(
+        'You do not have the permission to access this resource!',
+      );
     }
 
     return true;

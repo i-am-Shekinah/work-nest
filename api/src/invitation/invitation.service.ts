@@ -1,16 +1,11 @@
 import * as bcrypt from 'bcrypt';
-import {
-  PrismaClient,
-  UserRole,
-} from 'generated/prisma/client';
+import { PrismaClient, UserRole } from 'generated/prisma/client';
 import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserStatus } from 'src/types';
+import { UserMapper } from 'src/user/mappers/user.mapper';
 
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
@@ -22,13 +17,12 @@ export class InvitationService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   async inviteUser(dto: InviteUserDto) {
     const { email, firstName, lastName, role, departmentId } = dto;
 
     return await this.prisma.$transaction(async (tx: PrismaClient) => {
-
       let user = await this.prisma.user.findUnique({
         where: { email: email },
       });
@@ -40,9 +34,9 @@ export class InvitationService {
             firstName,
             lastName,
             role,
-            departmentId
+            departmentId,
           },
-        })
+        });
       }
 
       const token = await this.jwtService.signAsync(
@@ -63,15 +57,14 @@ export class InvitationService {
 
       return {
         token,
-        user,
+        user: UserMapper.toResponse(user),
       };
-    })
-
+    });
   }
 
   async acceptInvitation(dto: AcceptInvitationDto) {
     const { token, password, firstName, lastName } = dto;
-    let payload: { sub: string, email: string, role: UserRole }
+    let payload: { sub: string; email: string; role: UserRole };
 
     try {
       payload = await this.jwtService.verifyAsync(token);
@@ -98,7 +91,7 @@ export class InvitationService {
         role: user.role,
       });
 
-      return jwt;
-    })
+      return { jwt };
+    });
   }
 }
