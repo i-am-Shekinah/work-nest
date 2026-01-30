@@ -1,4 +1,4 @@
-import { UserRole } from 'src/types';
+import { UserRole } from 'generated/prisma/enums';
 
 import { SetMetadata } from '@nestjs/common';
 

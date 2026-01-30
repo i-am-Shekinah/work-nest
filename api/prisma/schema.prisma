@@ -40,16 +40,20 @@ model User {
   bookings          Booking[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+
+  @@map("users")
 }
 
 model Department {
   id        String   @id @default(cuid(2))
-  name      String
+  name      String   @unique
   users     User[]
   hodId     String?  @unique
   hod       User?    @relation("DepartmentHOD", fields: [hodId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
+
+  @@map("departments")
 }
 
 model Client {
@@ -62,6 +66,8 @@ model Client {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
+
+  @@map("clients")
 }
 
 model Booking {
@@ -77,4 +83,6 @@ model Booking {
   client         Client        @relation(fields: [clientId], references: [id])
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  @@map("bookings")
 }

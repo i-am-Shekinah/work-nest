@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -9,10 +9,12 @@ export class AcceptInvitationDto {
   readonly token: string;
 
   @ApiProperty({ example: 'Work' })
+  @IsOptional()
   @IsString()
   readonly firstName?: string;
 
   @ApiProperty({ example: 'Nest' })
+  @IsOptional()
   @IsString()
   readonly lastName?: string;
 

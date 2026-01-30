@@ -1,7 +1,8 @@
+import { UserRole } from 'generated/prisma/enums';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Public } from 'src/auth/public.decorator';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserRole } from 'src/types';
 
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
@@ -59,6 +60,7 @@ export class InvitationController {
     return this.invitationService.inviteUser(dto);
   }
 
+  @Public()
   @Post('accept-invite')
   @ApiOperation({ summary: 'Accept an invitation' })
   @ApiOkResponse({
@@ -76,7 +78,7 @@ export class InvitationController {
     description: 'Invalid request payload',
   })
   async acceptUser(@Body() dto: AcceptInvitationDto) {
-    const jwt = await this.invitationService.acceptInvitation(dto);
-    return { accessToken: jwt };
+    const token = await this.invitationService.acceptInvitation(dto);
+    return { token };
   }
 }

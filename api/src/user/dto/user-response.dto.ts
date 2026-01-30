@@ -29,8 +29,20 @@ export class UserResponseDto {
   status: UserStatus;
 
   @IsString()
+  @ApiProperty({ example: 'string' })
+  readonly profilePictureUrl: string;
+
+  @IsString()
   @ApiProperty({ example: 'nw7m5p9j9k0q2r4s5t6u7v8e' })
   readonly departmentId: string;
+
+  @IsString()
+  @ApiProperty({ example: 'Admin Department' })
+  readonly departmentName: string;
+
+  @IsString()
+  @ApiProperty({ example: 'Admin Department' })
+  readonly headedDepartmentName?: string;
 
   @IsDate()
   @ApiProperty({ example: '2026-01-29T10:20:30.000Z' })

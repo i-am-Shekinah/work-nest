@@ -1,9 +1,8 @@
 import * as bcrypt from 'bcrypt';
-import { PrismaClient, UserRole } from 'generated/prisma/client';
+import { PrismaClient, UserRole, UserStatus } from 'generated/prisma/client';
 import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserStatus } from 'src/types';
-import { UserMapper } from 'src/user/mappers/user.mapper';
+import { mapUserToAuthResponse } from 'src/user/mappers/user.mapper';
 
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -22,13 +21,16 @@ export class InvitationService {
   async inviteUser(dto: InviteUserDto) {
     const { email, firstName, lastName, role, departmentId } = dto;
 
-    return await this.prisma.$transaction(async (tx: PrismaClient) => {
-      let user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
+    const user = await this.prisma.$transaction(
+      async (tx: PrismaClient) => {
+        let existingUser = await this.prisma.user.findUnique({
+          where: { email: email },
+          include: { department: true, headedDepartment: true },
+        });
 
-      if (!user) {
-        user = await this.prisma.user.create({
+        if (existingUser) return existingUser;
+
+        return await this.prisma.user.create({
           data: {
             email,
             firstName,
@@ -36,30 +38,38 @@ export class InvitationService {
             role,
             departmentId,
           },
+          include: {
+            department: true,
+            headedDepartment: true,
+          },
         });
-      }
+      },
+      { timeout: 10000 },
+    );
 
-      const token = await this.jwtService.signAsync(
-        {
-          sub: user.id,
-          email,
-          role,
-        },
-        { expiresIn: '7d' },
-      );
+    const token = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email,
+        role,
+      },
+      { expiresIn: '7d' },
+    );
 
+    try {
       await this.mailService.sendUserInvitation(
         email,
         firstName,
         lastName,
         token,
       );
+    } catch (error) {
+      console.error('Failed to send invitation email:', error);
+    }
 
-      return {
-        token,
-        user: UserMapper.toResponse(user),
-      };
-    });
+    return {
+      user: mapUserToAuthResponse(user),
+    };
   }
 
   async acceptInvitation(dto: AcceptInvitationDto) {
@@ -70,6 +80,16 @@ export class InvitationService {
       payload = await this.jwtService.verifyAsync(token);
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired invitation token');
+    }
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (existingUser?.status === UserStatus.ACTIVE) {
+      throw new UnauthorizedException(
+        'The invitation has already been accepted',
+      );
     }
 
     return await this.prisma.$transaction(async (tx: PrismaClient) => {
@@ -85,13 +105,13 @@ export class InvitationService {
         },
       });
 
-      const jwt = await this.jwtService.signAsync({
+      const token = await this.jwtService.signAsync({
         sub: user.id,
         email: user.email,
         role: user.role,
       });
 
-      return { jwt };
+      return { token };
     });
   }
 }

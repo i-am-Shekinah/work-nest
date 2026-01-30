@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { UserRole } from 'src/types';
+import { UserRole } from 'generated/prisma/enums';
 
 import { ApiProperty } from '@nestjs/swagger';
 
