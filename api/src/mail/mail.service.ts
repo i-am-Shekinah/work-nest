@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerService: MailerService) { }
+  constructor(private readonly mailerService: MailerService) {}
 
   async sendUserInvitation(
     email: string,
@@ -64,11 +64,7 @@ export class MailService {
     });
   }
 
-  async sendPasswordReset(
-    email: string,
-    firstName: string,
-    resetLink: string,
-  ) {
+  async sendPasswordReset(email: string, firstName: string, resetLink: string) {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Forget Password',
@@ -124,11 +120,7 @@ export class MailService {
         </p>
 
       </div>
-      `
-    })
+      `,
+    });
   }
-
-
-
-
 }

@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
@@ -19,7 +9,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -47,8 +37,6 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-
-
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Forget password' })
@@ -57,13 +45,12 @@ export class AuthController {
     schema: {
       example: {
         message: 'If the email exists, a reset link has been sent.',
-      }
-    }
+      },
+    },
   })
   async forgetPassword(@Body() dto: ForgetPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
-
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
@@ -72,13 +59,11 @@ export class AuthController {
     description: 'Reset password',
     schema: {
       example: {
-        message: 'Password reset successfully'
-      }
-    }
+        message: 'Password reset successfully',
+      },
+    },
   })
   async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
   }
-
-
 }

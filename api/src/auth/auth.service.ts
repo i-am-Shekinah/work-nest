@@ -23,7 +23,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   async login(dto: LoginDto) {
     const { email, password } = dto;
@@ -68,7 +68,6 @@ export class AuthService {
       where: { email },
     });
 
-
     if (!user) {
       return {
         message: 'If the email exists, a reset link has been sent.',
@@ -90,7 +89,7 @@ export class AuthService {
       },
     });
 
-    const resetLink = `${this.configService.get('FRONTEND_URL',)}/reset-password?token=${rawToken}`;
+    const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${rawToken}`;
 
     await this.mailService.sendPasswordReset(
       user.email,
@@ -101,23 +100,19 @@ export class AuthService {
     return {
       message: 'If the email exists, a reset link has been sent.',
     };
-
   }
 
   async resetPassword(dto: ResetPasswordDto) {
     const { token, password } = dto;
 
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(token)
-      .digest('hex');
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const user = await this.prisma.user.findFirst({
       where: {
         resetPasswordToken: hashedToken,
         resetPasswordExpires: {
           gt: new Date(),
-        }
+        },
       },
     });
 
@@ -138,8 +133,6 @@ export class AuthService {
 
     return {
       message: 'Password reset successfully',
-    }
+    };
   }
-
-
 }

@@ -1,17 +1,10 @@
 import * as bcrypt from 'bcrypt';
-import {
-  PrismaClient,
-  UserRole,
-  UserStatus,
-} from 'generated/prisma/client';
+import { PrismaClient, UserRole, UserStatus } from 'generated/prisma/client';
 import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { mapUserToAuthResponse } from 'src/user/mappers/user.mapper';
 
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
@@ -25,14 +18,14 @@ export class InvitationService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async inviteUser(dto: InviteUserDto) {
     const { email, firstName, lastName, role, departmentId } = dto;
 
     const user = await this.prisma.$transaction(
       async (tx: PrismaClient) => {
-        let existingUser = await this.prisma.user.findUnique({
+        const existingUser = await this.prisma.user.findUnique({
           where: { email: email },
           include: { department: true, headedDepartment: true },
         });
@@ -67,7 +60,7 @@ export class InvitationService {
 
     const invitationLink = `${this.configService.get(
       'FRONTEND_URL',
-    )}/register?token=${token}`
+    )}/register?token=${token}`;
 
     try {
       await this.mailService.sendUserInvitation(
