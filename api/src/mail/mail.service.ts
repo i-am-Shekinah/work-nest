@@ -9,14 +9,14 @@ export class MailService {
     email: string,
     firstName: string,
     lastName: string,
-    token: string,
+    invitationLink: string,
   ) {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Welcome to Work Nest! Complete Your Registration',
       html: `
       <div style="
-        font-family: Arial, sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
         color: #1f2937;
         line-height: 1.5;
         max-width: 600px;
@@ -33,7 +33,7 @@ export class MailService {
         <p>You have been invited to join <strong>Work Nest</strong>. Please click the button below to complete your registration:</p>
         
         <p style="text-align: center; margin: 30px 0;">
-          <a href="https://work-nest.com/register?token=${token}" 
+          <a href="${invitationLink}" 
             style="
               display: inline-block;
               padding: 14px 28px;
@@ -48,7 +48,7 @@ export class MailService {
           </a>
         </p>
 
-        <p style="font-size: 14px; color: #6b7280;">
+        <p style="font-size: 14px; color: #6b7280; line-height: 1.6">
           This link will expire in <strong>7 days</strong>.<br/>
           If you did not expect this invitation, please ignore this email.
         </p>
@@ -63,4 +63,72 @@ export class MailService {
 `,
     });
   }
+
+  async sendPasswordReset(
+    email: string,
+    firstName: string,
+    resetLink: string,
+  ) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Forget Password',
+      html: `
+        <div style="
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+        line-height: 1.5;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9fafb;
+        ">
+          
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        
+          <h2 style="color: #4f46e5; margin-top: 0;">Welcome to Work Nest!</h2>
+        
+          <p>Hello ${firstName || 'User'},</p>
+
+          <p>
+            You requested to reset your password for your Work Nest account.
+            Click the button below to set a new password.
+          </p>
+
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${resetLink}" 
+              style="
+                display: inline-block;
+                padding: 14px 28px;
+                font-size: 16px;
+                font-weight: bold;
+                color: #ffffff;
+                background-color: #4f46e5;
+                text-decoration: none;
+                border-radius: 6px;
+              ">
+              Reset Password
+            </a>
+          </div>
+
+          <p style="font-size: 14px; color: #6b7280; line-height: 1.6">
+            This link will expire in <strong>1 hour</strong>.<br/>
+            If you did not expect this invitation, please ignore this email.
+          </p>
+
+          <p>Best regards,<br/>The Work Nest Team</p>
+        
+        </div>
+
+        <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 20px;">
+          Work Nest, 2 Cold Street, Lagos, Nigeria.
+        </p>
+
+      </div>
+      `
+    })
+  }
+
+
+
+
 }

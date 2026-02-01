@@ -4,7 +4,12 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/public.decorator';
 import { Roles } from 'src/auth/roles.decorator';
 
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -23,7 +28,7 @@ import { InvitationService } from './invitation.service';
 @Controller('invitation')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class InvitationController {
-  constructor(private readonly invitationService: InvitationService) {}
+  constructor(private readonly invitationService: InvitationService) { }
 
   @Post('invite-user')
   @Roles(UserRole.ADMIN)
@@ -60,6 +65,7 @@ export class InvitationController {
     return this.invitationService.inviteUser(dto);
   }
 
+
   @Public()
   @Post('accept-invite')
   @ApiOperation({ summary: 'Accept an invitation' })
@@ -81,4 +87,5 @@ export class InvitationController {
     const token = await this.invitationService.acceptInvitation(dto);
     return { token };
   }
+
 }

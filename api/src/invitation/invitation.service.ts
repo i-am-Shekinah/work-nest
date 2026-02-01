@@ -1,10 +1,18 @@
 import * as bcrypt from 'bcrypt';
-import { PrismaClient, UserRole, UserStatus } from 'generated/prisma/client';
+import {
+  PrismaClient,
+  UserRole,
+  UserStatus,
+} from 'generated/prisma/client';
 import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { mapUserToAuthResponse } from 'src/user/mappers/user.mapper';
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
@@ -16,7 +24,8 @@ export class InvitationService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) { }
 
   async inviteUser(dto: InviteUserDto) {
     const { email, firstName, lastName, role, departmentId } = dto;
@@ -56,12 +65,16 @@ export class InvitationService {
       { expiresIn: '7d' },
     );
 
+    const invitationLink = `${this.configService.get(
+      'FRONTEND_URL',
+    )}/register?token=${token}`
+
     try {
       await this.mailService.sendUserInvitation(
         email,
         firstName,
         lastName,
-        token,
+        invitationLink,
       );
     } catch (error) {
       console.error('Failed to send invitation email:', error);
