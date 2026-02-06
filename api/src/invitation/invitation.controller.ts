@@ -1,8 +1,8 @@
 import { UserRole } from 'generated/prisma/enums';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Public } from 'src/auth/public.decorator';
-import { Roles } from 'src/auth/roles.decorator';
 
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {

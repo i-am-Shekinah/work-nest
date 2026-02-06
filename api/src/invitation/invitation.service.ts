@@ -79,7 +79,7 @@ export class InvitationService {
   }
 
   async acceptInvitation(dto: AcceptInvitationDto) {
-    const { token, password, firstName, lastName } = dto;
+    const { token, password, firstName, lastName, profilePictureUrl } = dto;
     let payload: { sub: string; email: string; role: UserRole };
 
     try {
@@ -108,6 +108,7 @@ export class InvitationService {
           status: UserStatus.ACTIVE,
           firstName,
           lastName,
+          profilePictureUrl,
         },
       });
 

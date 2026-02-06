@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -22,4 +22,11 @@ export class AcceptInvitationDto {
   @IsString()
   @IsNotEmpty()
   readonly password: string;
+
+  @ApiProperty({
+    example: 'https://www.profile-picture-avatar.com/avatar1.png',
+  })
+  @IsOptional()
+  @IsUrl()
+  readonly profilePictureUrl?: string;
 }
