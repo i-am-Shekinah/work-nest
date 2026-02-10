@@ -1,5 +1,14 @@
-import { IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
-import { UserRole, UserStatus } from 'generated/prisma/enums';
+import {
+  IsBoolean,
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsString,
+} from 'class-validator';
+import {
+  UserRole,
+  UserStatus,
+} from 'generated/prisma/enums';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -40,9 +49,9 @@ export class UserResponseDto {
   @ApiProperty({ example: 'Admin Department' })
   readonly departmentName: string;
 
-  @IsString()
-  @ApiProperty({ example: 'Admin Department' })
-  readonly headedDepartmentName?: string;
+  @IsBoolean()
+  @ApiProperty({ example: 'true' })
+  readonly isDepartmentHead?: boolean;
 
   @IsDate()
   @ApiProperty({ example: '2026-01-29T10:20:30.000Z' })

@@ -12,11 +12,21 @@ const prisma = new PrismaClient({
 
 async function main() {
   // create admin dept & admin user
-  const adminDept = await prisma.department.upsert({
-    where: { name: 'Admin Department' },
-    update: {},
-    create: { name: 'Admin Department ' },
+  let adminDept = await prisma.department.findFirst({
+    where: {
+      name: 'Admin Department',
+      deletedAt: null as any,
+    },
   });
+
+  if (!adminDept) {
+    adminDept = await prisma.department.create({
+      data: {
+        name: 'Admin Department',
+        deletedAt: null,
+      }
+    })
+  }
 
   const adminExists = await prisma.user.findUnique({
     where: { email: 'admin@worknest.com' },
@@ -44,11 +54,21 @@ async function main() {
   bcrypt.compare;
 
   // create staff dept and staff users
-  const staffDept = await prisma.department.upsert({
-    where: { name: 'Technical Department' },
-    update: {},
-    create: { name: 'Technical Department' },
+  let staffDept = await prisma.department.findFirst({
+    where: {
+      name: 'Technical Department',
+      deletedAt: null as any,
+    },
   });
+
+  if (!staffDept) {
+    staffDept = await prisma.department.create({
+      data: {
+        name: 'Technical Department',
+        deletedAt: null,
+      }
+    })
+  }
 
   const staffUsersData = [
     { email: 'staff1@worknest.com', firstName: 'Silver', lastName: 'Smith' },

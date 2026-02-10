@@ -14,7 +14,7 @@ export function mapUserToAuthResponse(user: UserMapperInput): UserResponseDto {
       user.profilePictureUrl != null ? user.profilePictureUrl : '',
     departmentId: user.departmentId,
     departmentName: user.department?.name ?? '',
-    headedDepartmentName: user.headedDepartment?.name,
+    isDepartmentHead: user.headedDepartment?.name ? true : false,
     createdAt: user.createdAt,
   };
 }
