@@ -27,6 +27,7 @@ import {
 import { DepartmentService } from './department.service';
 import { AppointHODDto } from './dto/appoint-hod.dto';
 import { CreateDepartmentDto } from './dto/create-department.dto';
+import { DeleteDepartmentDto } from './dto/delete-deparment.dto';
 import { GetEmployeesQueryDto } from './dto/get-employees-query.dto';
 import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
@@ -141,14 +142,15 @@ export class DepartmentController {
 
   @Delete(':departmentId/delete')
   @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Soft delete a department' })
   @ApiOkResponse({
     description: 'The deleted department details',
 
   })
-  async delete(@Param('departmentId') departmentId: string) {
-    return this.departmentService.delete(departmentId);
+  async delete(@Param('departmentId') departmentId: string, @Body() dto: DeleteDepartmentDto) {
+    return this.departmentService.delete(departmentId, dto);
   }
 
 
