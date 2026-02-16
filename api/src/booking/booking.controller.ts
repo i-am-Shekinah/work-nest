@@ -11,7 +11,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -29,6 +28,7 @@ import {
 
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @ApiTags('Booking')
@@ -40,7 +40,7 @@ export class BookingController {
   @Get()
   @Roles(UserRole.ADMIN, UserRole.STAFF)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all bookings' })
+  @ApiOperation({ summary: 'Get bookings with search & filters' })
   @ApiOkResponse({
     description: 'List of bookings',
     schema: {
@@ -70,15 +70,24 @@ export class BookingController {
       }
     }
   })
+  @ApiQuery({ name: 'search', required: false, description: 'Search by title or description', example: 'team' })
+  @ApiQuery({ name: 'status', required: false, description: 'Filter by booking status', example: 'CONFIRMED', enum: ['CONFIRMED', 'CANCELLED', 'PENDING'] })
+  @ApiQuery({ name: 'startDate', required: false, description: 'Filter bookings starting from this date', example: '2026-01-01T00:00:00Z' })
+  @ApiQuery({ name: 'endDate', required: false, description: 'Filter bookings up to this date', example: '2026-01-31T23:59:59Z' })
+
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
-
-  async findAll(
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 10,
-  ) {
-    return this.bookingService.findAll(Number(page), Number(limit));
+  async findAll(@Query() dto: GetBookingsQueryDto) {
+    return this.bookingService.findAll(dto);
   }
+
+
+  // async findAll(
+  //   @Query('page', ParseIntPipe) page = 1,
+  //   @Query('limit', ParseIntPipe) limit = 10,
+  // ) {
+  //   return this.bookingService.findAll(Number(page), Number(limit));
+  // }
 
 
   @Get(':bookingId')
