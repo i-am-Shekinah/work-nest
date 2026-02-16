@@ -19,6 +19,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -145,7 +146,7 @@ export class DepartmentController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Soft delete a department' })
-  @ApiOkResponse({
+  @ApiNoContentResponse({
     description: 'The deleted department details',
 
   })

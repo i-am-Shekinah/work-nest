@@ -23,6 +23,7 @@ enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
+  COMPLETED
 }
 
 model User {
@@ -78,7 +79,7 @@ model Client {
 model Booking {
   id             String        @id @default(cuid(2))
   title          String
-  description    String
+  description    String?
   status         BookingStatus
   startTime      DateTime
   endTime        DateTime
@@ -86,8 +87,10 @@ model Booking {
   user           User          @relation(fields: [assignedUserId], references: [id])
   clientId       String
   client         Client        @relation(fields: [clientId], references: [id])
+  isDeleted      Boolean       @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
 
   @@map("bookings")
 }

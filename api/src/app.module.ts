@@ -8,6 +8,7 @@ import { InvitationModule } from './invitation/invitation.module';
 import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { DepartmentModule } from './department/department.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { DepartmentModule } from './department/department.module';
     InvitationModule,
     MailModule,
     DepartmentModule,
+    BookingModule,
   ],
   controllers: [],
   providers: [],

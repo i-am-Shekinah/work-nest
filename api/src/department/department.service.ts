@@ -125,7 +125,7 @@ export class DepartmentService {
   async findAll() {
     const departments = await this.prisma.department.findMany({
       where: { isDeleted: false },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { name: 'asc' },
     });
 
     return {
