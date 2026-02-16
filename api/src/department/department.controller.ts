@@ -11,7 +11,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -31,6 +30,7 @@ import { DepartmentService } from './department.service';
 import { AppointHODDto } from './dto/appoint-hod.dto';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { DeleteDepartmentDto } from './dto/delete-department.dto';
+import { GetDepartmentQueryDto } from './dto/get-department-query.dto';
 import { GetEmployeesQueryDto } from './dto/get-employees-query.dto';
 import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
@@ -69,13 +69,13 @@ export class DepartmentController {
       }
     }
   })
+  @ApiQuery({ name: 'search', required: false, example: 'Admin' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   async findAll(
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 10,
+    @Query() dto: GetDepartmentQueryDto
   ) {
-    return this.departmentService.findAll(page, limit);
+    return this.departmentService.findAll(dto);
   }
 
 
@@ -104,33 +104,6 @@ export class DepartmentController {
     @Query() dto: GetEmployeesQueryDto
   ) {
     return this.departmentService.getEmployees(dto, dto.page, dto.limit);
-  }
-
-
-  @Get('search/:name')
-  @Roles(UserRole.ADMIN)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Search departments by name' })
-  @ApiOkResponse({
-    description: 'List of departments matching the search criteria',
-    schema: {
-      example: {
-        departments: [
-          {
-            id: 'nw7m5p9j9k0q2r4s5t6u7v8w',
-            name: 'Administration',
-            hodId: 'nw7m5p9j9k0q2r4s5t6u7d9w',
-            createdAt: '2026-01-29T10:20:30.000Z',
-            updatedAt: '2026-01-29T10:20:30.000Z',
-          }
-        ]
-      }
-    }
-  })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  async searchByName(@Param('name') name: string, @Query('page', ParseIntPipe) page = 1, @Query('limit', ParseIntPipe) limit = 10) {
-    return this.departmentService.searchByName(name, page, limit);
   }
 
 

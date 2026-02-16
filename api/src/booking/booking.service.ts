@@ -62,8 +62,8 @@ export class BookingService {
     // 🔍 Search (title + description)
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search.trim(), mode: 'insensitive' } },
+        { description: { contains: search.trim(), mode: 'insensitive' } },
       ];
     }
 

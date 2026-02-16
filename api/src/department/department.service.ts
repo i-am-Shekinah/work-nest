@@ -13,6 +13,7 @@ import {
   DeleteDepartmentDto,
   DepartmentDeleteAction,
 } from './dto/delete-department.dto';
+import { GetDepartmentQueryDto } from './dto/get-department-query.dto';
 import { GetEmployeesQueryDto } from './dto/get-employees-query.dto';
 import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
@@ -122,16 +123,27 @@ export class DepartmentService {
 
 
 
-  async findAll(page: number = 1, limit: number = 10) {
-    page = Math.max(page, 1);
-    limit = Math.min(Math.max(limit, 1), 100);
-    const skip = (page - 1) * limit;
+  async findAll(dto: GetDepartmentQueryDto) {
+    let { search, page = 1, limit = 100 } = dto;
+    const safePage = Math.max(page, 1);
+    const safeLimit = Math.min(Math.max(limit, 1), 100);
+    const skip = (safePage - 1) * safeLimit;
+
+    const where: any = {
+      isDeleted: false,
+    }
+    if (search) {
+      where.name = {
+        contains: search.trim(),
+        mode: 'insensitive',
+      }
+    }
     const [departments, total] = await this.prisma.$transaction([
       this.prisma.department.findMany({
-        where: { isDeleted: false },
+        where,
         orderBy: { name: 'asc' },
         skip,
-        take: limit,
+        take: safeLimit,
       }),
       this.prisma.department.count({
         where: { isDeleted: false },
@@ -142,8 +154,9 @@ export class DepartmentService {
       data: departments,
       meta: {
         total,
-        page,
-        limit
+        page: safePage,
+        limit: safeLimit,
+        totalPages: Math.ceil(total / safeLimit),
       }
     }
   }
@@ -348,48 +361,6 @@ export class DepartmentService {
         totalPages: Math.ceil(total / limit),
       }
     }
-  }
-
-
-  async searchByName(name: string, page: number = 1, limit: number = 10) {
-    page = Math.max(page, 1);
-    limit = Math.min(Math.max(limit, 1), 100);
-    const skip = (page - 1) * limit;
-
-    const query = name.trim().toLowerCase();
-    if (!query) {
-      return [];
-    }
-
-    const [departments, total] = await this.prisma.$transaction([
-
-      this.prisma.department.findMany({
-        where: {
-          isDeleted: false,
-          name: {
-            contains: query,
-            mode: 'insensitive',
-          },
-        },
-        orderBy: { name: 'asc' },
-        skip,
-        take: limit,
-      }),
-      this.prisma.department.count({
-        where: { isDeleted: false },
-      }),
-    ])
-
-    return {
-      data: departments,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      }
-    }
-
   }
 
 

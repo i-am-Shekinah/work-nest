@@ -82,14 +82,6 @@ export class BookingController {
   }
 
 
-  // async findAll(
-  //   @Query('page', ParseIntPipe) page = 1,
-  //   @Query('limit', ParseIntPipe) limit = 10,
-  // ) {
-  //   return this.bookingService.findAll(Number(page), Number(limit));
-  // }
-
-
   @Get(':bookingId')
   @Roles(UserRole.ADMIN, UserRole.STAFF)
   @ApiBearerAuth()
