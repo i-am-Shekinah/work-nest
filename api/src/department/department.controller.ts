@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -22,13 +23,14 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
 import { DepartmentService } from './department.service';
 import { AppointHODDto } from './dto/appoint-hod.dto';
 import { CreateDepartmentDto } from './dto/create-department.dto';
-import { DeleteDepartmentDto } from './dto/delete-deparment.dto';
+import { DeleteDepartmentDto } from './dto/delete-department.dto';
 import { GetEmployeesQueryDto } from './dto/get-employees-query.dto';
 import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
@@ -67,8 +69,13 @@ export class DepartmentController {
       }
     }
   })
-  async findAll() {
-    return this.departmentService.findAll();
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  async findAll(
+    @Query('page', ParseIntPipe) page = 1,
+    @Query('limit', ParseIntPipe) limit = 10,
+  ) {
+    return this.departmentService.findAll(page, limit);
   }
 
 
@@ -90,8 +97,13 @@ export class DepartmentController {
       }
     }
   })
-  async getEmployees(@Query() dto: GetEmployeesQueryDto) {
-    return this.departmentService.getEmployees(dto);
+  @ApiQuery({ name: 'departmentId', required: false, example: 'nw7m5p9j9k0q2r4s5t6u7v8w' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  async getEmployees(
+    @Query() dto: GetEmployeesQueryDto
+  ) {
+    return this.departmentService.getEmployees(dto, dto.page, dto.limit);
   }
 
 
@@ -115,8 +127,10 @@ export class DepartmentController {
       }
     }
   })
-  async searchByName(@Param('name') name: string) {
-    return this.departmentService.searchByName(name);
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  async searchByName(@Param('name') name: string, @Query('page', ParseIntPipe) page = 1, @Query('limit', ParseIntPipe) limit = 10) {
+    return this.departmentService.searchByName(name, page, limit);
   }
 
 
@@ -155,7 +169,7 @@ export class DepartmentController {
   }
 
 
-  @Post(':departmentId/hod')
+  @Patch(':departmentId/hod')
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()

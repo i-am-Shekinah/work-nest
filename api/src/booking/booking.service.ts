@@ -13,13 +13,31 @@ export class BookingService {
   constructor(private readonly prisma: PrismaService) { }
 
 
-  async findAll() {
-    const bookings = await this.prisma.booking.findMany({
-      where: { isDeleted: false },
-      orderBy: { title: 'asc' }
-    })
+  async findAll(page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.min(Math.max(limit, 1), 100);
+    const skip = (page - 1) * limit;
+    const [bookings, total] = await this.prisma.$transaction([
+      this.prisma.booking.findMany({
+        where: { isDeleted: false },
+        orderBy: { title: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.booking.count({
+        where: { isDeleted: false },
+      }),
+    ])
 
-    return { bookings }
+    return {
+      data: bookings,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    }
   }
 
 

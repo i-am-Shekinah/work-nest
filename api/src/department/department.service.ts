@@ -12,7 +12,7 @@ import { CreateDepartmentDto } from './dto/create-department.dto';
 import {
   DeleteDepartmentDto,
   DepartmentDeleteAction,
-} from './dto/delete-deparment.dto';
+} from './dto/delete-department.dto';
 import { GetEmployeesQueryDto } from './dto/get-employees-query.dto';
 import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
@@ -122,14 +122,29 @@ export class DepartmentService {
 
 
 
-  async findAll() {
-    const departments = await this.prisma.department.findMany({
-      where: { isDeleted: false },
-      orderBy: { name: 'asc' },
-    });
+  async findAll(page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.min(Math.max(limit, 1), 100);
+    const skip = (page - 1) * limit;
+    const [departments, total] = await this.prisma.$transaction([
+      this.prisma.department.findMany({
+        where: { isDeleted: false },
+        orderBy: { name: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.department.count({
+        where: { isDeleted: false },
+      })
+    ]);
 
     return {
-      departments
+      data: departments,
+      meta: {
+        total,
+        page,
+        limit
+      }
     }
   }
 
@@ -282,7 +297,14 @@ export class DepartmentService {
   }
 
 
-  async getEmployees(dto: GetEmployeesQueryDto) {
+  async getEmployees(
+    dto: GetEmployeesQueryDto,
+    page: number = 1,
+    limit: number = 10
+  ) {
+    page = Math.max(page, 1);
+    limit = Math.min(Math.max(limit, 1), 100);
+    const skip = (page - 1) * limit;
     const { departmentId } = dto;
     if (departmentId) {
       const dept = await this.prisma.department.findUnique({
@@ -294,37 +316,80 @@ export class DepartmentService {
       }
     }
 
-    const employees = await this.prisma.user.findMany({
-      where: {
-        status: UserStatus.ACTIVE,
-        ...(departmentId && { departmentId })
-      },
-      include: {
-        department: true,
-        headedDepartment: true,
-      },
-      orderBy: { firstName: 'asc' },
-    });
-    return { employees: employees.map(mapUserToAuthResponse) };
+    const [employees, total] = await this.prisma.$transaction([
+
+      this.prisma.user.findMany({
+        where: {
+          status: UserStatus.ACTIVE,
+          ...(departmentId && { departmentId })
+        },
+        include: {
+          department: true,
+          headedDepartment: true,
+        },
+        orderBy: { firstName: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.user.count({
+        where: {
+          status: UserStatus.ACTIVE,
+          ...(departmentId && { departmentId })
+        }
+      })
+    ])
+
+    return {
+      data: employees.map(mapUserToAuthResponse),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    }
   }
 
 
-  async searchByName(name: string) {
+  async searchByName(name: string, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.min(Math.max(limit, 1), 100);
+    const skip = (page - 1) * limit;
+
     const query = name.trim().toLowerCase();
     if (!query) {
       return [];
     }
 
-    return this.prisma.department.findMany({
-      where: {
-        isDeleted: false,
-        name: {
-          contains: query,
-          mode: 'insensitive',
+    const [departments, total] = await this.prisma.$transaction([
+
+      this.prisma.department.findMany({
+        where: {
+          isDeleted: false,
+          name: {
+            contains: query,
+            mode: 'insensitive',
+          },
         },
-      },
-      orderBy: { name: 'asc' },
-    });
+        orderBy: { name: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.department.count({
+        where: { isDeleted: false },
+      }),
+    ])
+
+    return {
+      data: departments,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    }
+
   }
 
 
