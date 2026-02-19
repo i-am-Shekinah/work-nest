@@ -312,13 +312,12 @@ export class DepartmentService {
 
   async getEmployees(
     dto: GetEmployeesQueryDto,
-    page: number = 1,
-    limit: number = 10
   ) {
-    page = Math.max(page, 1);
-    limit = Math.min(Math.max(limit, 1), 100);
-    const skip = (page - 1) * limit;
-    const { departmentId } = dto;
+    const { page = 1, limit = 10, departmentId } = dto;
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.min(Math.max(limit, 1), 100);
+    const skip = (validatedPage - 1) * validatedLimit;
+
     if (departmentId) {
       const dept = await this.prisma.department.findUnique({
         where: { id: departmentId, isDeleted: false },

@@ -103,7 +103,7 @@ export class DepartmentController {
   async getEmployees(
     @Query() dto: GetEmployeesQueryDto
   ) {
-    return this.departmentService.getEmployees(dto, dto.page, dto.limit);
+    return this.departmentService.getEmployees(dto);
   }
 
 
