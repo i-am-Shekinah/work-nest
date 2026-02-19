@@ -8,6 +8,6 @@ import { BookingService } from './booking.service';
 @Module({
   imports: [PrismaModule],
   providers: [BookingService],
-  controllers: [BookingController]
+  controllers: [BookingController],
 })
-export class BookingModule { }
+export class BookingModule {}

@@ -10,7 +10,7 @@ export function IsBookingTimeValid(
 ) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: "isBookingTimeValid",
+      name: 'isBookingTimeValid',
       target: object.constructor,
       propertyName: propertyName,
       constraints: [startTimeField],
@@ -32,8 +32,8 @@ export function IsBookingTimeValid(
         },
         defaultMessage(args: ValidationArguments) {
           return `${args.property} must be after ${args.constraints[0]} and both times must be in the future`;
-        }
-      }
-    })
-  }
+        },
+      },
+    });
+  };
 }

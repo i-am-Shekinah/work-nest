@@ -8,6 +8,6 @@ import { DepartmentService } from './department.service';
 @Module({
   imports: [PrismaModule],
   providers: [DepartmentService],
-  controllers: [DepartmentController]
+  controllers: [DepartmentController],
 })
-export class DepartmentModule { }
+export class DepartmentModule {}

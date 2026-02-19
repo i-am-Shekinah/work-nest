@@ -38,9 +38,7 @@ import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 @Controller('department')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class DepartmentController {
-
-  constructor(private readonly departmentService: DepartmentService) { }
-
+  constructor(private readonly departmentService: DepartmentService) {}
 
   @Get()
   @Roles(UserRole.ADMIN)
@@ -64,25 +62,26 @@ export class DepartmentController {
             hodId: null,
             createdAt: '2026-01-29T10:20:30.000Z',
             updatedAt: '2026-01-29T10:20:30.000Z',
-          }
-        ]
-      }
-    }
+          },
+        ],
+      },
+    },
   })
   @ApiQuery({ name: 'search', required: false, example: 'Admin' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
-  async findAll(
-    @Query() dto: GetDepartmentQueryDto
-  ) {
+  async findAll(@Query() dto: GetDepartmentQueryDto) {
     return this.departmentService.findAll(dto);
   }
-
 
   @Get('employees')
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all employees', description: 'Optionally filter by department ID using query parameter ?departmentId=' })
+  @ApiOperation({
+    summary: 'Get all employees',
+    description:
+      'Optionally filter by department ID using query parameter ?departmentId=',
+  })
   @ApiOkResponse({
     description: 'List of employees in the department',
     schema: {
@@ -92,20 +91,21 @@ export class DepartmentController {
             id: 'nw7m5p9j9k0q2r4s5t6u7d9w',
             name: 'John Doe',
             email: 'john.doe@example.com',
-          }
-        ]
-      }
-    }
+          },
+        ],
+      },
+    },
   })
-  @ApiQuery({ name: 'departmentId', required: false, example: 'nw7m5p9j9k0q2r4s5t6u7v8w' })
+  @ApiQuery({
+    name: 'departmentId',
+    required: false,
+    example: 'nw7m5p9j9k0q2r4s5t6u7v8w',
+  })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
-  async getEmployees(
-    @Query() dto: GetEmployeesQueryDto
-  ) {
+  async getEmployees(@Query() dto: GetEmployeesQueryDto) {
     return this.departmentService.getEmployees(dto);
   }
-
 
   @Get(':departmentId')
   @Roles(UserRole.ADMIN)
@@ -120,13 +120,12 @@ export class DepartmentController {
         hodId: 'nw7m5p9j9k0q2r4s5t6u7d9w',
         createdAt: '2026-01-29T10:20:30.000Z',
         updatedAt: '2026-01-29T10:20:30.000Z',
-      }
-    }
+      },
+    },
   })
   async findOne(@Param('departmentId') departmentId: string) {
     return this.departmentService.findOne(departmentId);
   }
-
 
   @Delete(':departmentId/delete')
   @Roles(UserRole.ADMIN)
@@ -135,19 +134,21 @@ export class DepartmentController {
   @ApiOperation({ summary: 'Soft delete a department' })
   @ApiNoContentResponse({
     description: 'The deleted department details',
-
   })
-  async delete(@Param('departmentId') departmentId: string, @Body() dto: DeleteDepartmentDto) {
+  async delete(
+    @Param('departmentId') departmentId: string,
+    @Body() dto: DeleteDepartmentDto,
+  ) {
     return this.departmentService.delete(departmentId, dto);
   }
-
 
   @Patch(':departmentId/hod')
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Appoint or Remove a Head of Department (HOD)', description: 'To remove HOD, set the userId in the request body to null'
+    summary: 'Appoint or Remove a Head of Department (HOD)',
+    description: 'To remove HOD, set the userId in the request body to null',
   })
   @ApiOkResponse({
     description: 'HOD appointed successfully',
@@ -162,13 +163,15 @@ export class DepartmentController {
         },
         success: true,
         message: 'HOD appointed successfully',
-      }
-    }
+      },
+    },
   })
-  async appointHOD(@Param('departmentId') departmentId: string, @Body() dto: AppointHODDto) {
+  async appointHOD(
+    @Param('departmentId') departmentId: string,
+    @Body() dto: AppointHODDto,
+  ) {
     return this.departmentService.updateHOD(departmentId, dto);
   }
-
 
   @Patch(':departmentId/update-name')
   @Roles(UserRole.ADMIN)
@@ -185,15 +188,17 @@ export class DepartmentController {
           createdAt: '2026-01-29T10:20:30.000Z',
           updatedAt: '2026-01-29T10:20:30.000Z',
         },
-        message: 'Department name updated to Updated Administration successfully',
-      }
-    }
+        message:
+          'Department name updated to Updated Administration successfully',
+      },
+    },
   })
-  async update(@Param('departmentId') departmentId: string, @Body() dto: UpdateDepartmentNameDto) {
+  async update(
+    @Param('departmentId') departmentId: string,
+    @Body() dto: UpdateDepartmentNameDto,
+  ) {
     return this.departmentService.update(departmentId, dto);
   }
-
-
 
   @Get('employee/:employeeId')
   @HttpCode(HttpStatus.OK)
@@ -207,13 +212,12 @@ export class DepartmentController {
         id: 'nw7m5p9j9k0q2r4s5t6u7d9w',
         name: 'John Doe',
         email: 'john.doe@example.com',
-      }
-    }
+      },
+    },
   })
   async getEmployeeById(@Param('employeeId') employeeId: string) {
     return this.departmentService.getEmployeeById(employeeId);
   }
-
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -231,14 +235,11 @@ export class DepartmentController {
           createdAt: '2026-01-29T10:20:30.000Z',
           updatedAt: '2026-01-29T10:20:30.000Z',
         },
-        message: 'Department Administration created successfully'
-      }
-    }
+        message: 'Department Administration created successfully',
+      },
+    },
   })
   async create(@Body() dto: CreateDepartmentDto) {
     return this.departmentService.create(dto);
   }
-
-
-
 }

@@ -1,14 +1,5 @@
-import {
-  IsBoolean,
-  IsDate,
-  IsEmail,
-  IsEnum,
-  IsString,
-} from 'class-validator';
-import {
-  UserRole,
-  UserStatus,
-} from 'generated/prisma/enums';
+import { IsBoolean, IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
+import { UserRole, UserStatus } from 'generated/prisma/enums';
 
 import { ApiProperty } from '@nestjs/swagger';
 

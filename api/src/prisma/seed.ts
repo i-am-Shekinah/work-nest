@@ -24,8 +24,8 @@ async function main() {
       data: {
         name: 'Admin Department',
         deletedAt: null,
-      }
-    })
+      },
+    });
   }
 
   const adminExists = await prisma.user.findUnique({
@@ -66,8 +66,8 @@ async function main() {
       data: {
         name: 'Technical Department',
         deletedAt: null,
-      }
-    })
+      },
+    });
   }
 
   const staffUsersData = [

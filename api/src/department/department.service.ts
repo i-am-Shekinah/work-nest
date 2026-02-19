@@ -2,10 +2,7 @@ import { UserStatus } from 'generated/prisma/enums';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { mapUserToAuthResponse } from 'src/user/mappers/user.mapper';
 
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { AppointHODDto } from './dto/appoint-hod.dto';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -19,10 +16,7 @@ import { UpdateDepartmentNameDto } from './dto/update-department-name.dto';
 
 @Injectable()
 export class DepartmentService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) { }
-
+  constructor(private readonly prisma: PrismaService) {}
 
   private async getValidDepartmentOrThrow(departmentId: string) {
     const department = await this.prisma.department.findFirst({
@@ -30,14 +24,11 @@ export class DepartmentService {
     });
 
     if (!department) {
-      throw new BadRequestException(
-        'Department not found or already deleted',
-      );
+      throw new BadRequestException('Department not found or already deleted');
     }
 
     return department;
   }
-
 
   private async countActiveUsers(departmentId: string) {
     return this.prisma.user.count({
@@ -47,7 +38,6 @@ export class DepartmentService {
       },
     });
   }
-
 
   private async validateDeleteActionOrThrow(
     departmentId: string,
@@ -88,7 +78,6 @@ export class DepartmentService {
     }
   }
 
-
   private async executeDeletionTransaction(
     departmentId: string,
     dto: DeleteDepartmentDto,
@@ -120,9 +109,6 @@ export class DepartmentService {
     });
   }
 
-
-
-
   async findAll(dto: GetDepartmentQueryDto) {
     let { search, page = 1, limit = 100 } = dto;
     const safePage = Math.max(page, 1);
@@ -131,12 +117,12 @@ export class DepartmentService {
 
     const where: any = {
       isDeleted: false,
-    }
+    };
     if (search) {
       where.name = {
         contains: search.trim(),
         mode: 'insensitive',
-      }
+      };
     }
     const [departments, total] = await this.prisma.$transaction([
       this.prisma.department.findMany({
@@ -147,7 +133,7 @@ export class DepartmentService {
       }),
       this.prisma.department.count({
         where: { isDeleted: false },
-      })
+      }),
     ]);
 
     return {
@@ -157,17 +143,15 @@ export class DepartmentService {
         page: safePage,
         limit: safeLimit,
         totalPages: Math.ceil(total / safeLimit),
-      }
-    }
+      },
+    };
   }
-
 
   async findOne(id: string) {
     return this.prisma.department.findUniqueOrThrow({
       where: { id, isDeleted: false },
-    })
+    });
   }
-
 
   async create(dto: CreateDepartmentDto) {
     const deptExists = await this.prisma.department.findFirst({
@@ -175,21 +159,22 @@ export class DepartmentService {
         name: dto.name,
         isDeleted: false,
       },
-    })
+    });
     if (deptExists) {
-      throw new BadRequestException(`An active ${deptExists.name} department already exists`);
+      throw new BadRequestException(
+        `An active ${deptExists.name} department already exists`,
+      );
     }
 
     const dept = await this.prisma.department.create({
       data: dto,
-    })
+    });
 
     return {
       department: dept,
       message: `${dept.name} department created successfully`,
-    }
+    };
   }
-
 
   /**
    * Soft deletes a department with controlled handling of its active users.
@@ -208,16 +193,16 @@ export class DepartmentService {
    *
    * All operations (user updates + department soft delete) are executed
    * inside a single database transaction to ensure consistency.
-   * 
-   * 
+   *
+   *
    * @param departmentId The ID of the department to be removed.
    * @param dto Controls how active users are handled during deletion.
-   * 
+   *
    * @throws BadRequestException
    * - If the department does not exist
    * - If active users exists and no valid action is provided
    * - If reassignment is chosen but no valid reassignedDepartmentId is provided
-   * 
+   *
    */
   async delete(departmentId: string, dto: DeleteDepartmentDto) {
     await this.getValidDepartmentOrThrow(departmentId);
@@ -231,11 +216,8 @@ export class DepartmentService {
     return {
       success: true,
       message: 'Department deleted successfully',
-    }
-
-
+    };
   }
-
 
   async updateHOD(departmentId: string, dto: AppointHODDto) {
     const { userId } = dto;
@@ -258,7 +240,9 @@ export class DepartmentService {
       }
 
       if (user.departmentId !== departmentId) {
-        throw new BadRequestException('User does not belong to this department');
+        throw new BadRequestException(
+          'User does not belong to this department',
+        );
       }
 
       await this.prisma.department.update({
@@ -270,22 +254,19 @@ export class DepartmentService {
         department: dept,
         success: true,
         message: `${user.firstName} ${user.lastName} has been appointed as the HOD of ${dept.name}`,
-      }
-
+      };
     } else {
       await this.prisma.department.update({
         where: { id: departmentId },
         data: { hodId: null },
-      })
+      });
       return {
         department: dept,
         success: true,
         message: 'HOD removed successfully',
-      }
+      };
     }
-
   }
-
 
   async update(departmentId: string, dto: UpdateDepartmentNameDto) {
     const { name } = dto;
@@ -306,13 +287,10 @@ export class DepartmentService {
     return {
       department: dept,
       message: `Department name updated to ${name} successfully`,
-    }
+    };
   }
 
-
-  async getEmployees(
-    dto: GetEmployeesQueryDto,
-  ) {
+  async getEmployees(dto: GetEmployeesQueryDto) {
     const { page = 1, limit = 10, departmentId } = dto;
     const validatedPage = Math.max(page, 1);
     const validatedLimit = Math.min(Math.max(limit, 1), 100);
@@ -329,11 +307,10 @@ export class DepartmentService {
     }
 
     const [employees, total] = await this.prisma.$transaction([
-
       this.prisma.user.findMany({
         where: {
           status: UserStatus.ACTIVE,
-          ...(departmentId && { departmentId })
+          ...(departmentId && { departmentId }),
         },
         include: {
           department: true,
@@ -346,10 +323,10 @@ export class DepartmentService {
       this.prisma.user.count({
         where: {
           status: UserStatus.ACTIVE,
-          ...(departmentId && { departmentId })
-        }
-      })
-    ])
+          ...(departmentId && { departmentId }),
+        },
+      }),
+    ]);
 
     return {
       data: employees.map(mapUserToAuthResponse),
@@ -358,10 +335,9 @@ export class DepartmentService {
         page,
         limit,
         totalPages: Math.ceil(total / limit),
-      }
-    }
+      },
+    };
   }
-
 
   async getEmployeeById(employeeId: string) {
     const employee = await this.prisma.user.findUnique({
@@ -374,5 +350,4 @@ export class DepartmentService {
 
     return employee;
   }
-
 }

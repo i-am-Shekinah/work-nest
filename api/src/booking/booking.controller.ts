@@ -35,7 +35,7 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 @Controller('booking')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class BookingController {
-  constructor(private readonly bookingService: BookingService) { }
+  constructor(private readonly bookingService: BookingService) {}
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.STAFF)
@@ -49,7 +49,8 @@ export class BookingController {
           {
             id: 'nw7m5p9j9k0q2r4s5t6u7v8w',
             title: 'Weekly Team Meeting',
-            description: 'Internal meeting to discuss project updates and blockers',
+            description:
+              'Internal meeting to discuss project updates and blockers',
             status: 'CONFIRMED',
             startTime: '2026-01-29T10:20:30.000Z',
             endTime: '2026-01-29T12:20:30.000Z',
@@ -59,28 +60,48 @@ export class BookingController {
           {
             id: 'nw7m5p9j9k0q2r4s5t6u7v8x',
             title: 'Project Kickoff',
-            description: 'Initial meeting with John to discuss project scope and deliverables',
+            description:
+              'Initial meeting with John to discuss project scope and deliverables',
             status: 'CANCELLED',
             startTime: '2026-01-29T10:20:30.000Z',
             endTime: '2026-01-29T12:20:30.000Z',
             createdAt: '2026-01-29T10:20:30.000Z',
             updatedAt: '2026-01-29T10:20:30.000Z',
-          }
-        ]
-      }
-    }
+          },
+        ],
+      },
+    },
   })
-  @ApiQuery({ name: 'search', required: false, description: 'Search by title or description', example: 'team' })
-  @ApiQuery({ name: 'status', required: false, description: 'Filter by booking status', example: 'CONFIRMED', enum: ['CONFIRMED', 'CANCELLED', 'PENDING'] })
-  @ApiQuery({ name: 'startDate', required: false, description: 'Filter bookings starting from this date', example: '2026-01-01T00:00:00Z' })
-  @ApiQuery({ name: 'endDate', required: false, description: 'Filter bookings up to this date', example: '2026-01-31T23:59:59Z' })
-
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Search by title or description',
+    example: 'team',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    description: 'Filter by booking status',
+    example: 'CONFIRMED',
+    enum: ['CONFIRMED', 'CANCELLED', 'PENDING'],
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    description: 'Filter bookings starting from this date',
+    example: '2026-01-01T00:00:00Z',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    description: 'Filter bookings up to this date',
+    example: '2026-01-31T23:59:59Z',
+  })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   async findAll(@Query() dto: GetBookingsQueryDto) {
     return this.bookingService.findAll(dto);
   }
-
 
   @Get(':bookingId')
   @Roles(UserRole.ADMIN, UserRole.STAFF)
@@ -98,8 +119,8 @@ export class BookingController {
         endTime: '2026-01-29T12:20:30.000Z',
         createdAt: '2026-01-29T10:20:30.000Z',
         updatedAt: '2026-01-29T10:20:30.000Z',
-      }
-    }
+      },
+    },
   })
   async findOne(@Param('bookingId') bookingId: string) {
     return this.bookingService.findOne(bookingId);
@@ -118,7 +139,8 @@ export class BookingController {
         booking: {
           id: 'nw7m5p9j9k0q2r4s5t6u7v8w',
           title: 'Project Kickoff',
-          description: 'Initial meeting with Alice to discuss project scope and deliverables',
+          description:
+            'Initial meeting with Alice to discuss project scope and deliverables',
           status: 'CONFIRMED',
           startTime: '2026-01-29T10:20:30.000Z',
           endTime: '2026-01-29T12:20:30.000Z',
@@ -127,13 +149,12 @@ export class BookingController {
         },
         success: true,
         message: 'Booking created successfully',
-      }
-    }
+      },
+    },
   })
   async create(@Body() dto: CreateBookingDto) {
     return this.bookingService.create(dto);
   }
-
 
   @Patch(':bookingId')
   @Roles(UserRole.ADMIN, UserRole.STAFF)
@@ -155,13 +176,15 @@ export class BookingController {
         },
         success: true,
         message: 'Booking updated successfully',
-      }
-    }
+      },
+    },
   })
-  async update(@Param('bookingId') bookingId: string, @Body() dto: UpdateBookingDto) {
+  async update(
+    @Param('bookingId') bookingId: string,
+    @Body() dto: UpdateBookingDto,
+  ) {
     return this.bookingService.update(bookingId, dto);
   }
-
 
   @Delete(':bookingId')
   @Roles(UserRole.ADMIN, UserRole.STAFF)
@@ -174,14 +197,10 @@ export class BookingController {
       example: {
         success: true,
         message: 'Booking deleted successfully',
-      }
-    }
+      },
+    },
   })
   async delete(@Param('bookingId') bookingId: string) {
     return this.bookingService.delete(bookingId);
   }
-
-
-
-
 }
