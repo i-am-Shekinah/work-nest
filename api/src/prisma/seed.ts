@@ -118,7 +118,12 @@ async function main() {
 
   for (const client of clientsData) {
     const exists = await prisma.client.findUnique({
-      where: { email: client.email },
+      where: {
+        email_deletedAt: {
+          email: client.email,
+          deletedAt: null as any,
+        }
+      },
     });
 
     if (!exists) {
