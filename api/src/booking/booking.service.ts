@@ -1,6 +1,9 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
@@ -8,34 +11,8 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Injectable()
 export class BookingService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  // async findAll(page: number = 1, limit: number = 10) {
-  //   page = Math.max(page, 1);
-  //   limit = Math.min(Math.max(limit, 1), 100);
-  //   const skip = (page - 1) * limit;
-  //   const [bookings, total] = await this.prisma.$transaction([
-  //     this.prisma.booking.findMany({
-  //       where: { isDeleted: false },
-  //       orderBy: { title: 'asc' },
-  //       skip,
-  //       take: limit,
-  //     }),
-  //     this.prisma.booking.count({
-  //       where: { isDeleted: false },
-  //     }),
-  //   ])
-
-  //   return {
-  //     data: bookings,
-  //     meta: {
-  //       total,
-  //       page,
-  //       limit,
-  //       totalPages: Math.ceil(total / limit),
-  //     }
-  //   }
-  // }
 
   async findAll(dto: GetBookingsQueryDto) {
     const { search, status, startDate, endDate, page = 1, limit = 10 } = dto;

@@ -33,7 +33,7 @@ export class CreateBookingDto {
 
   @ApiProperty({ example: '2026-03-03T16:00:00.000Z' })
   @IsDateString()
-  @Validate(IsBookingTimeValid, ['startTime'])
+  @IsBookingTimeValid('startTime')
   readonly endTime: string;
 
   @ApiProperty({ example: 'nw7m5p9j9k0q2r4s5t6u7d9w' })
