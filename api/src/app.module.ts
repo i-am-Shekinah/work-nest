@@ -10,6 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { DepartmentModule } from './department/department.module';
 import { BookingModule } from './booking/booking.module';
 import { ClientModule } from './client/client.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ClientModule } from './client/client.module';
     DepartmentModule,
     BookingModule,
     ClientModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

@@ -19,7 +19,9 @@ export class ClientService {
     const safeLimit = Math.min(Math.max(limit, 1), 100);
     const skip = (safePage - 1) * safeLimit;
 
-    const where: any = {};
+    const where: any = {
+      isDeleted: false,
+    };
 
     // 🔍 Search (name + email)
     if (search) {

@@ -342,12 +342,16 @@ export class DepartmentService {
   async getEmployeeById(employeeId: string) {
     const employee = await this.prisma.user.findUnique({
       where: { id: employeeId },
+      include: {
+        department: true,
+        headedDepartment: true,
+      },
     });
 
     if (!employee) {
       throw new BadRequestException('Employee not found');
     }
 
-    return employee;
+    return mapUserToAuthResponse(employee);
   }
 }
