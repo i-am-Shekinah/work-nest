@@ -33,8 +33,7 @@ function AuthShell({
             Operations, bookings, and people management in one place.
           </h1>
           <p className="mt-4 max-w-xl text-sm text-slate-300">
-            This frontend is wired to the Nest backend through env-configured API and Swagger URLs,
-            protected server-side sessions, and feature-based routing.
+              A streamlined booking system for managing services, schedules, and users efficiently through a clean and intuitive interface.
           </p>
         </div>
         <Card className="mx-auto w-full max-w-xl">
